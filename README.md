@@ -3,13 +3,13 @@
 ## **Index Description**
 
 The **BESS ERCOT Index** is a transparent **perfect foresight**, rules-based benchmark that estimates the daily arbitrage earnings of a reference battery operating in Texas across ERCOT markets.
-It aggregates opportunities from **Day-Ahead Market (DAM)** and **Real-Time Market (RTM)** average prices, using ERCOT official files for Texas. It uses hourly DAM settlement point prices from the hub **HB_HOUSTON** and applies the **τ-greedy one-cycle method**.
+It aggregates opportunities from **Day-Ahead Market (DAM)** and **Real-Time Market (RTM)** prices using official ERCOT data. It uses hourly DAM settlement point prices from the hub **HB_HOUSTON** and applies the **τ-greedy one-cycle method**.
 
 - **Reference asset:** 1 MW, 2h duration, with a daily usable energy of 2 MWh. 
 - **Round-Trip Efficiency:** 85%  for a full cycle.
 
 **What the Index Represents:**
-The index is a simplified benchmark for the earnings that could have been theoretically been obtained with perfect information.
+The index is a simplified benchmark for the earnings that could have been theoretically obtained with perfect information.
 
 ---
 
@@ -18,63 +18,71 @@ The index is a simplified benchmark for the earnings that could have been theore
 This section compares arbitrage opportunities for a reference battery operating in ERCOT's Day-Ahead Market (DAM) versus Real-Time Market (RTM) using the same τ-greedy one-cycle method. The goal of this analysis is not to propose an executable trading strategy, but to understand how market structure and volatility affect theoretical arbitrage revenues under perfect foresight. 
 
 ### Overview of findings
-RTM generates higher total arbitrage revenue than DAM, though most days show similar performance across both markets. The difference is driven by a small number of extreme RTM spike days. RTM revenues are significantly more volatile, offering higher upside alongside deeper downside risk. DAM provides smoother and more predictable revenue, capturing most of the baseline arbitrage value. The cumulative revenue gap between RTM and DAM widens primarily during periods of grid stress. Overall, RTM value is spike-driven, while DAM value is stability-driven.
+RTM generates higher total arbitrage revenue than DAM, though most days show similar performance across both markets. The difference is driven by a small number of extreme RTM spike days. RTM revenues are significantly more volatile, offering higher upside alongside deeper downside risk exposure. DAM provides smoother and more predictable revenue, capturing most of the baseline arbitrage value. The cumulative revenue gap between RTM and DAM widens primarily during periods of grid stress. Overall, RTM value is spike-driven, while DAM value is stability-driven.
 
 ### Visualization Deep Dive
-#### 1. Daily Arbitrage Revenue: DAM vs RTM ###
-Daily arbitrage revenues for DAM and RTM are shown over the analysis period.
+#### 1. Daily Arbitrage Revenue: DAM vs RTM 
+This plot shows daily arbitrage revenue for both markets over time.
 
 **Key observations:**
 - RTM exhibits sharp revenue spikes.
 - DAM revenue is smoother, with fewer extreme days.
 - On most days, both markets generate similar revenue levels.
+![daily](dam_vs_rtm/daily.png)
 
-#### 2. Cumulative Arbitrage Revenue: DAM vs RTM ###
-Cumulative arbitrage revenues for DAM and RTM are shown over the analysis period.
+#### 2. Cumulative Arbitrage Revenue: DAM vs RTM 
+This visualization accumulates daily revenues to show total arbitrage value over time.
 
 **Key observations:**
 - RTM cumulative revenue ends higher than DAM.
 - Outside of extreme events, both curves grow at similar rates.
+![cumulative](dam_vs_rtm/cumulative.png)
 
-#### 3. Distribution of Daily Revenues: DAM vs RTM ###
-Frequency distribution of daily revenues for DAM and RTM are shown over the analysis period.
+#### 3. Distribution of Daily Revenues: DAM vs RTM 
+This histogram compares the frequency distribution of daily revenues.
 
 **Key observations:**
 - DAM revenues are tightly clustered with limited tail risk.
 - RTM revenues exhibit a wider dispersion and a heavy right tail. 
 - Extreme RTM outcomes occur infrequently but dominate the upper tail.
+![revenue_distribution](dam_vs_rtm/revenue_distribution.png)
 
 
-#### 4. Distribution of Daily Uplift: DAM vs RTM ###
-Frequency distribution of daily uplift for DAM and RTM are shown over the analysis period.
+#### 4. Distribution of Daily Uplift: DAM vs RTM 
+This histogram compares the frequency distribution of daily uplift.
+
 Daily uplift is defined as:  Uplift = RTM Revenue - DAM Revenue
 
 **Key observations:**
 - A strong concentration of values near zero.
 - A long right tail corresponding to extreme RTM spike days.
+![uplift_distribution](dam_vs_rtm/uplift_distribution.png)
 
-#### 5. Rolling 7-Day Revenue Volatility ###
-Rolling 7-day standard deviation of daily revenues for DAM and RTM are shown over the analysis period.
+#### 5. Rolling 7-Day Revenue Volatility 
+This plot shows rolling 7-day standard deviation of daily revenues.
 
 **Key observations:**
 - RTM volatility is consistently higher than DAM volatility.
 - Volatility spikes align with known ERCOT stress periods (e.g., hot months).
 - DAM volatility remains comparatively stable throughout the year.
+![rolling](dam_vs_rtm/rolling.png)
 
-#### 6. Monthly Revenue Distributions: DAM and RTM ###
-Monthly revenue boxplots for DAM and RTM are shown over the analysis period.
+#### 6. Monthly Revenue Distributions: DAM and RTM 
+Monthly boxplots provide a seasonal view of revenue behavior.
 
 **Key observations:**
 - Both DAM and RTM show higher median revenues during summer months.
 - RTM exhibits wider interquartile ranges and more extreme outliers.
 - DAM distributions remain comparatively compact even during high-stress periods.
+![monthly_dam](dam_vs_rtm/monthly_dam.png)
+![monthly_rtm](dam_vs_rtm/monthly_rtm.png)
 
 ---
 
 ## **LP Optimum Comparison**
-To validate the τ-greedy index as a meaningful benchmark, it is compared against the true perfect-foresight optimum obtained by solving a daily linear program (LP) for battery arbitrage. The LP solution represents the maximum achievable arbitrage revenue for a given day. As a result, the LP serves as the ground-truth benchmark against which the τ-greedy heuristic is evaluated. 
+To validate the τ-greedy index as a meaningful benchmark, it is compared against the true perfect-foresight optimum obtained by solving a daily linear program (LP) for battery arbitrage. The LP solution represents the maximum achievable arbitrage revenue for a given day and therefore serves as the ground-truth benchmark against which the τ-greedy heuristic is evaluated.
 
-### **Key Metric: Optimality Capture Ratio**
+### **Key Metric: Optimality Capture Ratio** 
 Performance is evaluated using the optimality capture ratio:
 Capture Ratio = τ-greedy Revenue / LP Optimum Revenue
 
@@ -93,14 +101,16 @@ This scatter plot compares daily τ-greedy revenue against the LP optimum.
 - Most points lie close to the 45-degree line (y = x).
 - τ-greedy rarely deviates dramatically from the LP solution.
 
+![scatter](lp_optimum/scatter.png)
+
 #### **2. Distribution of Optimality Capture**
-This scatter plot compares daily τ-greedy revenue against the LP optimum. 
+This histogram shows the distribution of daily optimality capture ratios.
 
 **Key observations:**
 - A strong concentration of days with capture ratios close to 1.0.
 - Median capture near the upper end of the distribution.
 - A left tail corresponding to days where LP exploits more complex dispatch patterns.
-
+![distribution](lp_optimum/distribution.png)
 
 #### **3. Cumulative Revenue: τ-greedy vs LP Optimum**
 This plot compares cumulative arbitrage revenue over time.
@@ -109,12 +119,7 @@ This plot compares cumulative arbitrage revenue over time.
 - LP cumulative revenue remains above τ-greedy, as expected.
 - The gap grows gradually rather than abruptly.
 - τ-greedy tracks the LP curve closely throughout the year.
-
-
-
-
-
-
+![cumulative](lp_optimum/cumulative.png)
 
 --- 
 
@@ -131,7 +136,7 @@ The optimizer behind the index uses a heuristic algorithm called the **τ-greedy
 
 ## **Example (Simplified): 2-period battery, no efficiency losses**
 
-To illustrate the logic, consider a very simple battery that can charge in two intervals and discharge in another two, with no losses (η = 1). The figure below shows all the possible split points τ that defines the charge and discharge windows:
+To illustrate the logic, consider a very simple battery that can charge in two intervals and discharge in another two, with no losses (η = 1). The figure below shows all the possible split points τ that define the charge and discharge windows:
 ![example](example.png)
 
 
